@@ -19,5 +19,24 @@ func InitDB() error {
 		return err
 	}
 	DB = db
+	return LinksTableUp(db)
+}
+
+func LinksTableUp(db *sql.DB) error {
+	query := `CREATE TABLE IF NOT EXISTS "LINKS" (
+		"ID" TEXT PRIMARY KEY,
+		"Title" TEXT NOT NULL,
+		"Address" TEXT NOT NULL,
+		"UserID" TEXT NOT NULL
+		);`
+	stmt, err := db.Prepare(query)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+	_, err = stmt.Exec()
+	if err != nil {
+		return err
+	}
 	return nil
 }
