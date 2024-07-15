@@ -1,6 +1,11 @@
 package models
 
-import "database/sql"
+import (
+	"database/sql"
+
+	"github.com/chickazama/gql-hackernews/internal/database"
+	"github.com/google/uuid"
+)
 
 type Link struct {
 	ID      string
@@ -8,6 +13,16 @@ type Link struct {
 	Address string
 	UserID  string
 	db      *sql.DB
+}
+
+func NewLink(title, address, userID string) *Link {
+	id := uuid.NewString()
+	return &Link{
+		ID:      id,
+		Title:   title,
+		Address: address,
+		db:      database.DB,
+	}
 }
 
 func (l *Link) Save() (int64, error) {
