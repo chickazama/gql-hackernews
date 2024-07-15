@@ -11,7 +11,7 @@ type Link struct {
 }
 
 func (l *Link) Save() (int64, error) {
-	query := `INSERT INTO LINKS (
+	query := `INSERT INTO "LINKS" (
 		ID,
 		Title,
 		Address,
