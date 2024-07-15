@@ -6,3 +6,8 @@ type Link {
   address: String!
   user: User!
 }
+
+type User {
+  id: ID!
+  name: String!
+}
