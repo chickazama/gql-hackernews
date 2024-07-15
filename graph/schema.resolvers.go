@@ -9,16 +9,17 @@ import (
 	"fmt"
 
 	"github.com/chickazama/gql-hackernews/graph/model"
+	"github.com/chickazama/gql-hackernews/internal/models"
 )
 
 // CreateLink is the resolver for the createLink field.
 func (r *mutationResolver) CreateLink(ctx context.Context, input model.NewLink) (*model.Link, error) {
-	ret := &model.Link{
-		Title:   input.Title,
-		Address: input.Address,
-		User:    &model.User{Name: "Matty"},
+	link := models.NewLink(input.Title, input.Address, "test")
+	_, err := link.Save()
+	if err != nil {
+		return nil, err
 	}
-	return ret, nil
+	return &model.Link{ID: link.ID, Title: link.Title, Address: link.Address, User: &model.User{ID: link.UserID, Name: "Test"}}, nil
 }
 
 // CreateUser is the resolver for the createUser field.
