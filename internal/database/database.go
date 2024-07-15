@@ -3,6 +3,7 @@ package database
 import (
 	"database/sql"
 
+	"github.com/chickazama/gql-hackernews/internal/models"
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -39,4 +40,23 @@ func LinksTableUp(db *sql.DB) error {
 		return err
 	}
 	return nil
+}
+
+func GetAllLinks() ([]models.Link, error) {
+	var ret []models.Link
+	query := "SELECT * FROM LINKS;"
+	rows, err := DB.Query(query)
+	if err != nil {
+		return ret, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var link models.Link
+		err := rows.Scan(&link.ID, &link.Title, &link.Address, &link.UserID)
+		if err != nil {
+			return ret, err
+		}
+		ret = append(ret, link)
+	}
+	return ret, nil
 }
