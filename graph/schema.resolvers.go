@@ -9,13 +9,14 @@ import (
 	"fmt"
 
 	"github.com/chickazama/gql-hackernews/graph/model"
+	"github.com/chickazama/gql-hackernews/internal/database"
 	"github.com/chickazama/gql-hackernews/internal/models"
 )
 
 // CreateLink is the resolver for the createLink field.
 func (r *mutationResolver) CreateLink(ctx context.Context, input model.NewLink) (*model.Link, error) {
 	link := models.NewLink(input.Title, input.Address, "test")
-	_, err := link.Save()
+	_, err := link.Save(database.DB)
 	if err != nil {
 		return nil, err
 	}
@@ -39,13 +40,23 @@ func (r *mutationResolver) RefreshToken(ctx context.Context, input model.Refresh
 
 // Links is the resolver for the links field.
 func (r *queryResolver) Links(ctx context.Context) ([]*model.Link, error) {
-	var ret []*model.Link
-	dummy := &model.Link{
-		Title:   "Dummy Link",
-		Address: "https://example.com",
-		User:    &model.User{Name: "Matty"},
+	// var ret []*model.Link
+	// dummy := &model.Link{
+	// 	Title:   "Dummy Link",
+	// 	Address: "https://example.com",
+	// 	User:    &model.User{Name: "Matty"},
+	// }
+	// ret = append(ret, dummy)
+	// return ret, nil
+	links, err := database.GetAllLinks()
+	if err != nil {
+		return nil, err
 	}
-	ret = append(ret, dummy)
+	var ret []*model.Link
+	for _, link := range links {
+		next := &model.Link{ID: link.ID, Title: link.Title, Address: link.Address, User: &model.User{ID: link.UserID, Name: "Test"}}
+		ret = append(ret, next)
+	}
 	return ret, nil
 }
 
