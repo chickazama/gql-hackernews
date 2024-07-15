@@ -3,7 +3,6 @@ package models
 import (
 	"database/sql"
 
-	"github.com/chickazama/gql-hackernews/internal/database"
 	"github.com/google/uuid"
 )
 
@@ -12,7 +11,6 @@ type Link struct {
 	Title   string
 	Address string
 	UserID  string
-	db      *sql.DB
 }
 
 func NewLink(title, address, userID string) *Link {
@@ -21,18 +19,17 @@ func NewLink(title, address, userID string) *Link {
 		ID:      id,
 		Title:   title,
 		Address: address,
-		db:      database.DB,
 	}
 }
 
-func (l *Link) Save() (int64, error) {
+func (l *Link) Save(db *sql.DB) (int64, error) {
 	query := `INSERT INTO "LINKS" (
 		ID,
 		Title,
 		Address,
 		UserID
 	) VALUES (?, ?, ?, ?);`
-	stmt, err := l.db.Prepare(query)
+	stmt, err := db.Prepare(query)
 	if err != nil {
 		return 0, err
 	}
